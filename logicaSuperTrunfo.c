@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <ctype.h>
 
 /*
 Challenge 'Super Trunfo' - Countries (theme)
@@ -14,7 +18,6 @@ Ex: A01, A02, B01
 // Global variables
 #define MAX_CODE 4
 #define MAX_CITY 20
-int cards = 0;
 
 typedef struct card
 {
@@ -25,63 +28,157 @@ typedef struct card
   unsigned int places;
   double area;
   double pib;
-  float pop_density;
-  float pib_pcap;
-  float spower;
+  double pop_density;
+  double pib_pcap;
+  double spower;
 }card;
 
+/* Prototype functions */
+// Create cards
 card create_card(void);
+card random_card(void);
+
+// Calculate
 double calc_pop_density(card card);
 double calc_pib_pcap(card card);
 double calc_spower(card card);
+
+// Print
 void print_card(card card);
-void compare(card a, card b);
+void title(char *text);
+void game_intro(void);
+void menu(void);
+void menu_fields(void);
+void print_winner(int result);
+
+int menu_choice(void);
+
+// Compare functions
+int winner_pop(card a, card b);
+int winner_places(card a, card b);
+int winner_area(card a, card b);
+int winner_pib(card a, card b);
+int winner_pop_density(card a, card b);
+int winner_pib_pcap(card a, card b);
+int winner_spower(card a, card b);
 
 int main()
 {
-  printf("How many cards do you wanna create? ");
-  scanf("%i", &cards);
+  // Local variables
+  card user;
+  card robot;
 
-  // Array for each card
-  card card_list[cards];
+  // Intro explaining the game
+  game_intro();
+
+  // Show options to create cards
+  menu();
+
+  // Get user answer
+  int choice = menu_choice();
   
-  // Create each card
-  for(int i = 0; i < cards; i++)
+  // Menu to select how to fill user card
+  switch (choice)
   {
-    // Header 
+  case 1:
+    // Manual
+    title("YOUR CARD");
+    user = create_card();
+    break;
+  case 2:
+    // Random
+    title("YOUR CARD");
+    user = random_card();
+    print_card(user);
+    break;
+  default:
+    printf("Invalid option.");
+    return 1;
+    break;
+  }
+  
+  // Create robot's card
+  robot = random_card();
+  title("COMPUTER CARD");
+  printf("The computer's card is ready too!\n");
+
+  // Select atributes to compare
+  title("FIGHT TIME");
+  menu_fields();
+  int fight_field = menu_choice();
+
+  switch (fight_field)
+  {
+  case 1:
+    // Population
     printf("\n");
-    printf("--------- FILL CARD %i ---------\n", (i + 1));
-    
-    // Create card
-    card_list[i] = create_card();
-
-    // Calculate density population
-    card_list[i].pop_density = calc_pop_density(card_list[i]);
-    
-    // Calculate PIB per capita
-    card_list[i].pib_pcap = calc_pib_pcap(card_list[i]);
-
-    // Calculate super power
-    card_list[i].spower = calc_spower(card_list[i]);
+    printf("Yours: %.2lu\n", user.pop);
+    printf("Computer: %.2lu\n", robot.pop);
+    printf("\n");
+    print_winner(winner_pop(user, robot));
+    break;
+  case 2:
+    // Places to visit
+    printf("\n");
+    printf("Yours: %u\n", user.places);
+    printf("Computer: %u\n", robot.places);
+    printf("\n");
+    print_winner(winner_places(user, robot));
+    break;
+  case 3:
+    // Area
+    printf("\n");
+    printf("Yours: %.2fkm²\n", user.area);
+    printf("Computer: %.2fkm²\n", robot.area);
+    printf("\n");
+    print_winner(winner_area(user, robot));
+    break;
+  case 4:
+    // PIB
+    printf("\n");
+    printf("Yours: R$ %.2f\n", user.pib);
+    printf("Computer: R$ %.2f\n", robot.pib);
+    printf("\n");
+    print_winner(winner_pib(user, robot));
+    break;
+  case 5:
+    // Pop. density
+    printf("\n");
+    printf("Yours: %.2f\n", user.pop_density);
+    printf("Computer: %.2f\n", robot.pop_density);
+    printf("\n");
+    print_winner(winner_pop_density(user, robot));
+    break;
+  case 6:
+    // PIB per capita
+    printf("\n");
+    printf("Yours: %.2f\n", user.pib_pcap);
+    printf("Computer: %.2f\n", robot.pib_pcap);
+    printf("\n");
+    print_winner(winner_pib_pcap(user, robot));
+    break;
+  case 7:
+    // Super power
+    printf("\n");
+    printf("Yours: %.2f\n", user.spower);
+    printf("Computer: %.2f\n", robot.spower);
+    printf("\n");
+    print_winner(winner_spower(user, robot));
+    break;
+  default:
+    printf("Invalid option.\n");
+    return 1;
+    break;
   }
-  
-  // Print all cards
-  for (int i = 0; i < cards; i++)
-  {
-    print_card(card_list[i]);
-  }
-  
-  // Compare
-  compare(card_list[0], card_list[1]);
-
   return 0;
 } 
 
-// Functions
+/* Functions */
+
 card create_card(void)
 {
   card new_card;
-  
+
   // City
   printf("City's name: ");
   scanf("%s", new_card.city);
@@ -110,6 +207,33 @@ card create_card(void)
   printf("City's code: ");
   scanf("%s", new_card.code);
 
+  // Calculate density population
+  new_card.pop_density = calc_pop_density(new_card);
+  
+  // Calculate PIB per capita
+  new_card.pib_pcap = calc_pib_pcap(new_card);
+
+  // Calculate super power
+  new_card.spower = calc_spower(new_card);
+
+  return new_card;
+}
+
+card random_card(void)
+{
+  card new_card;
+
+  strcpy(new_card.code, "B01");
+  strcpy(new_card.city, "Maji");
+  new_card.state = 'B';
+  new_card.pop = rand() % 10000000 + 100000;
+  new_card.places = rand() % 100 + 1;
+  new_card.area = (double)(rand() % 5000 + 100);
+  new_card.pib = (double)(rand() % 500000000 + 1000000);
+  new_card.pop_density = calc_pop_density(new_card);
+  new_card.pib_pcap = calc_pib_pcap(new_card);
+  new_card.spower = calc_spower(new_card);
+
   return new_card;
 }
 
@@ -134,8 +258,8 @@ double calc_spower(card card)
 void print_card(card card)
 {
   printf("\n");
-  printf("[%s] --------------------------------\n", card.code);
   printf("✦ %s\n", card.city);
+  printf("Code....................%s\n", card.code);
   printf("State...................%c\n", card.state);
   printf("Population..............%lu\n", card.pop);
   printf("Places to visit.........%u\n", card.places);
@@ -146,79 +270,160 @@ void print_card(card card)
   printf("Super power.............%.2lf\n", card.spower);
 }
 
-void compare(card a, card b)
+int winner_pop(card a, card b)
 {
-  // Header
-  printf("\n");
-  printf("---------------- FIGHT TIME! ----------------\n");
-  
-  // Population
+  // Win the smallest number
   if (a.pop > b.pop)
   {
-    printf("Population...................✔︎ %s venceu!\n", a.city);
+    return 1;
   }
   if (a.pop < b.pop)
   {
-    printf("Population...................✔︎ %s venceu!\n", b.city);
+    return 2;
   }
+  return 0;
+}
 
-  // Places to visit
+int winner_places(card a, card b)
+{
   if (a.places > b.places)
   {
-    printf("Places to visit..............✔︎ %s venceu!\n", a.city);
+    return 1;
   }
   if (a.places < b.places)
   {
-    printf("Places to visit..............✔︎ %s venceu!\n", b.city);
+    return 2;
   }
+  return 0;
+}
 
-  // Area
+int winner_area(card a, card b)
+{
   if (a.area > b.area)
   {
-    printf("Area.........................✔︎ %s venceu!\n", a.city);
+    return 1;
   }
   if (a.area < b.area)
   {
-    printf("Area.........................✔︎ %s venceu!\n", b.city);
+    return 2;
   }
+  return 0;
+}
 
-  // PIB
+int winner_pib(card a, card b)
+{
   if (a.pib > b.pib)
   {
-    printf("PIB..........................✔︎ %s venceu!\n", a.city);
+    return 1;
   }
   if (a.pib < b.pib)
   {
-    printf("PIB..........................✔︎ %s venceu!\n", b.city);
+    return 2;
   }
+  return 0;
+}
 
-  // Population density
+int winner_pop_density(card a, card b)
+{
   if (a.pop_density > b.pop_density)
   {
-    printf("Pop. density.................✔︎ %s venceu!\n", b.city);
+    return 2;
   }
   if (a.pop_density < b.pop_density)
   {
-    printf("Pop. density.................✔︎ %s venceu!\n", a.city);
+    return 1;
   }
+  return 0;
+}
 
-  // PIB per capita
+int winner_pib_pcap(card a, card b)
+{
   if (a.pib_pcap > b.pib_pcap)
   {
-    printf("PIB per capita...............✔︎ %s venceu!\n", a.city);
+    return 1;
   }
   if (a.pib_pcap < b.pib_pcap)
   {
-    printf("PIB per capita...............✔︎ %s venceu!\n", b.city);
+    return 2;
   }
+  return 0;
+}
 
-  // Super power
+int winner_spower(card a, card b)
+{
   if (a.spower > b.spower)
   {
-    printf("Super power..................✔︎ %s venceu!\n", a.city);
+    return 1;
   }
   if (a.spower < b.spower)
   {
-    printf("Super power..................✔︎ %s venceu!\n", b.city);
+    return 2;
+  }
+  return 0;
+}
+
+void title(char *text)
+{
+  printf("\n");
+  printf("---------------------- %s ---------------------- \n", text);
+}
+
+void game_intro(void)
+{
+  // Game intro
+  title("SUPER TRUNFO: COUNTRIES");
+  printf("\n");
+  printf("The first thing to do is to create your card, you can\n");
+  printf("choose to fill it manually or generate with random informations.\n");
+  printf("Your enemy will be the Computer, it'll have a random card.\n");
+  printf("After that, choose which card's field you want to battle with.\n");
+  printf("\n");
+  printf("---------------------------------------------------------------------\n");
+}
+
+void menu(void)
+{
+  printf("Let's star creating your card. \n");
+  printf("\n");
+  printf("[1] Create card manually\n");
+  printf("[2] Create a random card\n");
+  printf("\n");
+  printf("What do you prefer? ");
+}
+
+int menu_choice(void)
+{
+  int answer;
+  scanf("%i", &answer);
+  return answer;
+}
+
+void menu_fields(void)
+{
+  printf("Cards fields:\n");
+  printf("[1] Population\n");
+  printf("[2] Places to visit\n");
+  printf("[3] Area\n");
+  printf("[4] PIB\n");
+  printf("[5] Pop. density\n");
+  printf("[6] PIB per capita\n");
+  printf("[7] Super power\n");
+  printf("\n");
+  printf("Which field you want to battle with? ");
+}
+
+void print_winner(int result)
+{
+  if (result == 0)
+  {
+    printf("TIE!\n");
+  }
+  if (result == 1)
+  {
+    printf("YOU WON!\n");
+  }
+  if (result == 2)
+  {
+    printf("COMPUTER WON!\n");
   }
 }
