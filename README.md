@@ -1,41 +1,21 @@
 # Top Trumps: Countries
 
-This project was developed as part of an introductory programming lesson exercise using the C language.
+This project was developed as part of a college lesson about C.
 
-The original challenge proposal came from my college GitHub Classroom repositories:
+The original challenge proposal came from these repositories:
 
 * [Cadastro de Cartas](https://github.com/Cursos-TI/cadastro-cartas-sabrigs)
 * [Desafio Lógica Super Trunfo](https://github.com/Cursos-TI/desafio-l-gica-super-trunfo-sabrigs)
 
-The idea behind the exercise was to simulate a simplified version of the classic card game *Top Trumps* (or Super Trunfo, in portuguese), where two cards battle by comparing attributes such as population, area, GDP and population density.
+The idea behind this was to simulate a simplified version of the classic card game *Top Trumps* (or Super Trunfo, in portuguese), where two cards battle by comparing attributes such as population, area, GDP and population density.
 
-While developing the project, the implementation gradually evolved beyond just "making it work". The exercise became an opportunity to practice:
+## Scope
 
-* problem decomposition
-* modular programming
-* function organization
-* data modeling with structs
-* program flow architecture
-* scope management during development
-
-One important design decision was intentionally keeping the game limited to only two cards.
+One important decision was intentionally keeping the game limited to only two cards.
 
 An earlier idea was to create a complete deck system using arrays and dynamic memory allocation (`malloc`), allowing the player to register multiple cards and choose which one to play with.
 
-Initial concept:
-
-```mermaid id="f1o7v9"
-flowchart TD
-
-A[Create Card] --> B[Allocate memory with malloc]
-B --> C[Store in deck array]
-C --> D[Player selects card]
-D --> E[Battle]
-```
-
-However, after reviewing the actual requirements of the exercise, the implementation was simplified on purpose.
-
-Since the challenge only required comparing two cards, adding deck management and dynamic memory allocation would increase complexity without contributing directly to the learning goals of the assignment.
+However, since the challenge only required comparing two cards, adding deck management and dynamic memory allocation would increase complexity without contributing directly to the learning goals of the assignment.
 
 Because of that, the final version uses:
 
@@ -45,8 +25,6 @@ Because of that, the final version uses:
 * direct comparison between cards
 
 This helped keep the focus on core introductory concepts instead of prematurely introducing advanced memory management.
-
-
 
 # Game logic
 
@@ -71,116 +49,9 @@ H --> I[Display Winner]
 I --> J[End]
 ```
 
+# Some ideas* future improviments
 
-
-# Card structure
-
-Each card contains:
-
-| Field          | Description                   |
-| -------------- | ----------------------------- |
-| code           | Card identifier               |
-| city           | City name                     |
-| state          | State letter                  |
-| pop            | Population                    |
-| places         | Touristic places              |
-| area           | City area                     |
-| pib            | Gross Domestic Product        |
-| pop_density    | Calculated population density |
-| pib_per_capita | Calculated GDP per capita     |
-| spower         | Combined "super power" score  |
-
-The project uses a `struct` to group all card data into a single entity.
-
-
-
-# Technologies and concepts used
-
-## Structs
-
-The game uses a custom struct:
-
-```c id="vwjlwm"
-typedef struct card
-```
-
-This allows all card attributes to stay grouped together and makes function communication cleaner.
-
-
-
-## Functions
-
-The project was separated into small specialized functions.
-
-### Card Creation
-
-* `create_card()`
-* `random_card()`
-
-### Calculations
-
-* `calc_pop_density()`
-* `calc_pib_pcap()`
-* `calc_spower()`
-
-### Comparison
-
-* `winner_pop()`
-* `winner_area()`
-* `winner_pib()`
-* `winner_pop_density()`
-* `winner_pib_pcap()`
-* `winner_spower()`
-
-### Interface / display
-
-* `menu()`
-* `menu_fields()`
-* `print_card()`
-* `print_winner()`
-
-This separation helped avoid large blocks of code inside `main()` and improved readability during development.
-
-## Control structures
-
-### switch
-
-Used for:
-
-* selecting card generation mode
-* selecting battle attribute
-
-Example:
-
-```c id="mv4qsl"
-switch (fight_field)
-```
-
-## if
-
-Used in comparison functions to determine the winner.
-
-Example:
-
-```c id="k29v8p"
-if (a.pop > b.pop)
-```
-
-## Random generation
-
-The computer card and optional player card use:
-
-```c id="y90f2n"
-rand()
-```
-
-to generate random attributes.
-
-# Future improvements & Study backlog
-
-The table below represents possible improvements and future study paths for the project.
-
-| Category             | Possible Improvements                                                                                                                                                                 | Topics to Study                                                |
+| Category             | Improvements                                                                                                                                                                 | Topics to Study                                                |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | Input Validation     | • Validate invalid numeric input<br>• Prevent negative values<br>• Protect against division by zero<br>• Validate string size before storing<br>• Study safer alternatives to `scanf` | Buffer handling<br>Defensive programming<br>Input sanitization |
 | Code Reusability     | • Create a generic comparison function<br>• Reduce duplicated `winner_*()` logic<br>• Explore enums for attribute selection                                                           | Abstraction<br>Generic functions<br>Enums in C                 |
@@ -189,3 +60,6 @@ The table below represents possible improvements and future study paths for the 
 | Project Architecture | • Split code into `.h` and `.c` files<br>• Create modules for game/card/utils<br>• Organize project folders                                                                           | Modularization<br>Header files<br>Compilation process          |
 | Game Balance         | • Improve super power formula<br>• Normalize attribute scales<br>• Add weighted scoring system                                                                                        | Balancing systems<br>Normalization<br>Game design logic        |
 | User Experience      | • Improve terminal layout<br>• Add colors to interface<br>• Add animations/loading effects<br>• Improve text formatting                                                               | Terminal UX<br>ANSI escape codes<br>CLI design                 |
+
+
+*The ideas were generated with ChatGPT to help me to improve my code skills.
