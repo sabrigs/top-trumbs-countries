@@ -1,74 +1,203 @@
-# ⚠️ Importante!!!
-Você pode escolher qualquer um dos desafios para desenvolver. Sinta-se à vontade para começar pelo desafio que mais lhe interessa.
+# Top Trumps: Countries
 
-# Desafio Super Trunfo - Países - Comparação das Cartas
+This project was developed as part of an introductory programming lesson exercise using the C language.
 
-Bem-vindo ao desafio "Super Trunfo - Países"! Neste projeto, você desenvolverá um sistema para comparar cartas baseadas em atributos de cidades. O desafio é dividido em três níveis: Novato, Aventureiro e Mestre. Cada nível adiciona novas funcionalidades e complexidades, permitindo um aprendizado progressivo.
+The original challenge proposal came from my college GitHub Classroom repositories:
 
-## 🏅 Nível Novato
+* [Cadastro de Cartas](https://github.com/Cursos-TI/cadastro-cartas-sabrigs)
+* [Desafio Lógica Super Trunfo](https://github.com/Cursos-TI/desafio-l-gica-super-trunfo-sabrigs)
 
-No nível Novato, você começará implementando a lógica básica de comparação entre cartas utilizando estruturas de decisão `if` e `if-else`.
+The idea behind the exercise was to simulate a simplified version of the classic card game *Top Trumps* (or Super Trunfo, in portuguese), where two cards battle by comparing attributes such as population, area, GDP and population density.
 
-### 🚩 Objetivos:
-- **Cadastro de Cartas:** O sistema permitirá ao usuário cadastrar cartas de cidades, incluindo informações como estado, código da carta, nome da cidade, população, área, PIB e número de pontos turísticos.
-- **Comparação de Cartas:** O sistema comparará os atributos de duas cartas e determinará a vencedora com base em uma propriedade específica (população, área, PIB, etc.), escolhida no código.
-- **Exibição de Resultados:** Após a comparação, o sistema exibirá qual carta venceu com base na regra: maior valor vence, exceto em densidade populacional, onde o menor valor é o vencedor.
+While developing the project, the implementation gradually evolved beyond just "making it work". The exercise became an opportunity to practice:
 
-### 📥 Entrada de Dados:
-- Os dados das cartas serão inseridos manualmente via terminal.
-- O sistema solicitará interativamente as informações de cada carta.
+* problem decomposition
+* modular programming
+* function organization
+* data modeling with structs
+* program flow architecture
+* scope management during development
 
-### 📤 Saída de Dados:
-- Após o cadastro, as propriedades da cidade serão exibidas de forma organizada.
-- O resultado da comparação será mostrado, indicando a carta vencedora.
+One important design decision was intentionally keeping the game limited to only two cards.
 
----
+An earlier idea was to create a complete deck system using arrays and dynamic memory allocation (`malloc`), allowing the player to register multiple cards and choose which one to play with.
 
-## 🏅 Nível Aventureiro
+Initial concept:
 
-No nível Aventureiro, você expandirá o sistema para incluir a comparação aninhada e a criação de um menu interativo usando `switch`.
+```mermaid id="f1o7v9"
+flowchart TD
 
-### 🆕 Diferença em relação ao Nível Novato:
-- **Menu Interativo:** O usuário poderá escolher diferentes atributos para comparação através de um menu.
-- **Comparação Aninhada:** Implementação de lógica de comparação mais complexa, utilizando estruturas aninhadas para tomar decisões baseadas em múltiplos atributos.
+A[Create Card] --> B[Allocate memory with malloc]
+B --> C[Store in deck array]
+C --> D[Player selects card]
+D --> E[Battle]
+```
 
-### 🚩 Novas Funcionalidades:
-- **Cadastro de Cartas:** Similar ao nível Novato, com a adição de comparação de múltiplos atributos.
-- **Menu Interativo:** Uso de `switch` para criar um menu que permite ao jogador escolher os atributos a serem comparados.
-- **Exibição de Resultados:** O sistema exibirá o resultado da comparação, indicando qual carta venceu e qual atributo foi utilizado.
+However, after reviewing the actual requirements of the exercise, the implementation was simplified on purpose.
 
----
+Since the challenge only required comparing two cards, adding deck management and dynamic memory allocation would increase complexity without contributing directly to the learning goals of the assignment.
 
-## 🏅 Nível Mestre
+Because of that, the final version uses:
 
-No nível Mestre, o desafio se intensifica com a adição de funcionalidades avançadas, como menus dinâmicos e lógica de decisão complexa com operadores ternários.
+* only two card variables (`user` and `robot`)
+* stack allocation instead of heap allocation
+* fixed game flow
+* direct comparison between cards
 
-### 🆕 Diferença em relação ao Nível Aventureiro:
-- **Escolha de Dois Atributos:** O usuário poderá escolher dois atributos para comparação entre as cartas.
-- **Lógica de Decisão Complexa:** Implementação de estruturas de decisão aninhadas e encadeadas, além do uso de operadores ternários para determinar a carta vencedora.
-- **Menus Dinâmicos:** Os menus serão dinâmicos, permitindo uma navegação fluida entre as opções de comparação.
-
-### 🚩 Novas Funcionalidades:
-- **Comparação de Dois Atributos:** O sistema comparará dois atributos simultaneamente para determinar a carta vencedora.
-- **Lógica Avançada:** Uso de operadores ternários e lógica aninhada para lidar com comparações complexas.
-- **Empates:** O sistema será capaz de lidar com empates, exibindo mensagens apropriadas.
-- **Exibição de Resultados:** Exibição dos resultados das comparações de forma clara e interativa.
+This helped keep the focus on core introductory concepts instead of prematurely introducing advanced memory management.
 
 ---
 
-## 📋 Requisitos Funcionais Comuns
-- **Cadastro de Cartas:** O sistema deve permitir o cadastro de cartas com as informações necessárias.
-- **Comparação:** O sistema deve comparar as cartas e determinar a vencedora com base nas regras estabelecidas.
-- **Exibição de Resultados:** Os resultados devem ser exibidos de forma clara, indicando a carta vencedora.
+# Game logic
 
-## 📌 Requisitos Não Funcionais Comuns
-- **Usabilidade:** A interface do usuário deve ser simples e intuitiva.
-- **Performance:** O sistema deve executar operações sem atrasos perceptíveis.
-- **Manutenibilidade:** O código deve ser bem estruturado e documentado.
-- **Confiabilidade:** O sistema deve ser robusto e capaz de lidar com entradas inválidas de forma adequada.
+The game follows this flow:
+
+```mermaid id="vjlwm9"
+flowchart TD
+
+A[Start Game] --> B[Show Intro]
+B --> C[Choose Card Creation Mode]
+
+C -->|Manual| D[Create User Card]
+C -->|Random| E[Generate Random User Card]
+
+D --> F[Generate Computer Card]
+E --> F
+
+F --> G[Choose Battle Attribute]
+
+G --> H[Compare Cards]
+H --> I[Display Winner]
+I --> J[End]
+```
 
 ---
 
-Boa sorte no desenvolvimento deste desafio e aproveite para aprender e se divertir enquanto progride pelos níveis!
+# Card structure
 
-Equipe de Ensino - MateCheck
+Each card contains:
+
+| Field          | Description                   |
+| -------------- | ----------------------------- |
+| code           | Card identifier               |
+| city           | City name                     |
+| state          | State letter                  |
+| pop            | Population                    |
+| places         | Touristic places              |
+| area           | City area                     |
+| gdp            | Gross Domestic Product        |
+| pop_density    | Calculated population density |
+| gdp_per_capita | Calculated GDP per capita     |
+| spower         | Combined "super power" score  |
+
+The project uses a `struct` to group all card data into a single entity.
+
+---
+
+# Technologies and concepts used
+
+## Structs
+
+The game uses a custom struct:
+
+```c id="vwjlwm"
+typedef struct card
+```
+
+This allows all card attributes to stay grouped together and makes function communication cleaner.
+
+---
+
+## Functions
+
+The project was separated into small specialized functions.
+
+### Card Creation
+
+* `create_card()`
+* `random_card()`
+
+### Calculations
+
+* `calc_pop_density()`
+* `calc_pib_pcap()`
+* `calc_spower()`
+
+### Comparison
+
+* `winner_pop()`
+* `winner_area()`
+* `winner_pib()`
+* `winner_pop_density()`
+* `winner_pib_pcap()`
+* `winner_spower()`
+
+### Interface / display
+
+* `menu()`
+* `menu_fields()`
+* `print_card()`
+* `print_winner()`
+
+This separation helped avoid large blocks of code inside `main()` and improved readability during development.
+
+---
+
+## Control structures
+
+### switch
+
+Used for:
+
+* selecting card generation mode
+* selecting battle attribute
+
+Example:
+
+```c id="mv4qsl"
+switch (fight_field)
+```
+
+---
+
+## if
+
+Used in comparison functions to determine the winner.
+
+Example:
+
+```c id="k29v8p"
+if (a.pop > b.pop)
+```
+
+---
+
+## Random generation
+
+The computer card and optional player card use:
+
+```c id="y90f2n"
+rand()
+```
+
+to generate random attributes.
+
+---
+
+# Future improvements & Study backlog
+
+The items below represent possible improvements and future study paths for the project.
+
+# 🚀 Future Improvements / Study Backlog
+
+The table below represents possible improvements and future study paths for the project.
+
+| Category             | Possible Improvements                                                                                                                                                                                     | Topics to Study                                                |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Input Validation     | - [ ] Validate invalid numeric input<br>- [ ] Prevent negative values<br>- [ ] Protect against division by zero<br>- [ ] Validate string size before storing<br>- [ ] Study safer alternatives to `scanf` | Buffer handling<br>Defensive programming<br>Input sanitization |
+| Code Reusability     | - [ ] Create a generic comparison function<br>- [ ] Reduce duplicated `winner_*()` logic<br>- [ ] Explore enums for attribute selection                                                                   | Abstraction<br>Generic functions<br>Enums in C                 |
+| Game Flow            | - [ ] Add "play again" loop<br>- [ ] Create main menu loop<br>- [ ] Add score system<br>- [ ] Add multiple battle rounds                                                                                  | Loops<br>State management<br>Game flow architecture            |
+| Data Organization    | - [ ] Generate different cities and states<br>- [ ] Create external card database<br>- [ ] Load cards from files                                                                                          | File handling<br>CSV/TXT parsing<br>Dynamic data               |
+| Project Architecture | - [ ] Split code into `.h` and `.c` files<br>- [ ] Create modules for game/card/utils<br>- [ ] Organize project folders                                                                                   | Modularization<br>Header files<br>Compilation process          |
+| Game Balance         | - [ ] Improve super power formula<br>- [ ] Normalize attribute scales<br>- [ ] Add weighted scoring system                                                                                                | Balancing systems<br>Normalization<br>Game design logic        |
+| User Experience      | - [ ] Improve terminal layout<br>- [ ] Add colors to interface<br>- [ ] Add animations/loading effects<br>- [ ] Improve text formatting                                                                   | Terminal UX<br>ANSI escape codes<br>CLI design                 |
