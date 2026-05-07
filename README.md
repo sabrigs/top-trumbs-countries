@@ -19,10 +19,10 @@ However, since the challenge only required comparing two cards, adding deck mana
 
 Because of that, the final version uses:
 
-* only two card variables (`user` and `robot`)
-* stack allocation instead of heap allocation
-* fixed game flow
-* direct comparison between cards
+* only two card variables;
+* stack allocation instead of heap allocation;
+* fixed game flow;
+* direct comparison between cards.
 
 This helped keep the focus on core introductory concepts instead of prematurely introducing advanced memory management.
 
